@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema<User>({
 //     password:{type:String, required:true, select:false}
 // }, {timestamps:true})
 
-const UserModel= mongoose.model<User>("user", UserSchema)
+const UserModel= mongoose.models.User||mongoose.model<User>("user", UserSchema)
 // const UserModel= mongoose.models.User
 
 export default UserModel;

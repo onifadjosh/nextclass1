@@ -4,45 +4,41 @@ import { registerUser } from "../actions/user.actions";
 import { User } from "../types";
 
 const Page = () => {
-  const [User, setUser] = useState({
+  const [User, setUser] = useState<User>({
     firstname: "",
     lastname: "",
     email: "",
     password: "",
   });
 
-  
+  const [loading, setloading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-  console.log(e.target.value);  
+    console.log(e.target.value);
     console.log(e.target.name);
 
     // const name = e.target.name;
     // const value = e.target.value;
     console.log(e.target);
-    
 
-    const {name, value }= e.target
-
+    const { name, value } = e.target;
 
     setUser({
       ...User,
-      [name]:value
+      [name]: value,
     });
 
     // console.log(User);
-    
-
-    
   };
-  
-  const submitForm=async(User:User)=>{
-    console.log(User);
-    registerUser(User)
-    console.log("I am working");
-  
-  }
 
+  const submitForm = async (User: User) => {
+    setloading(true);
+    console.log(User);
+
+    await registerUser(User);
+    setloading(false);
+    console.log("I am working");
+  };
 
   return (
     <div className="  flex h-screen  justify-center items-center px-5 ">
@@ -82,7 +78,6 @@ const Page = () => {
             name="email"
             className="border /outline-1 /focus:outline-green-700 p-2 w-full rounded-sm "
             onChange={handleChange}
-
           />
         </div>
 
@@ -97,8 +92,11 @@ const Page = () => {
           />
         </div>
 
-        <button onClick={()=>submitForm(User)} className="py-2 bg-black text-white rounded-sm /hover:bg-green-800  sm:/hover:bg-red-800 md:/hover:bg-blue-800 hover:/cursor-pointer /hover:-translate-y-1 transition delay-150 /hover:scale-105 /animate-spin">
-          Register
+        <button
+          onClick={() => submitForm(User)}
+          className="py-2 bg-black text-white rounded-sm /hover:bg-green-800  sm:/hover:bg-red-800 md:/hover:bg-blue-800 hover:/cursor-pointer /hover:-translate-y-1 transition delay-150 /hover:scale-105 /animate-spin"
+        >
+          {loading ? "Registering..." : "Register"}
         </button>
       </div>
     </div>

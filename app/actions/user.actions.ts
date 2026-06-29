@@ -28,3 +28,20 @@ export const registerUser = async(form:User)=>{
     redirect("/users")
     
 }
+
+export const getUser=async(id:string)=>{
+    await dbConnect()
+
+  const user=  await UserModel.findById(id)
+
+  if(!user){
+    
+    return {
+        message:"user does not exist"
+    };
+  }else{
+
+      return user;
+  }
+
+}

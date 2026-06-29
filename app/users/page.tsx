@@ -6,11 +6,19 @@ import { User } from '../types'
 const Page = async() => {
     await dbConnect()
     const users:User[] = await UserModel.find()
+
   return (
-    <div>
+    <div   className='flex gap-2 flex-wrap'>
         {
             users.map((_, idx)=>(
-                <div key={_._id}>{idx+1}.{_.firstname+" "+_.lastname}</div>
+                <form action={`/users/${_._id}`} key={_._id}>
+                  <div  className='border rounded-sm px-4 py-2 '>
+                  
+                  <h1 className='text-lg font-bold'>{idx+1}.{_.firstname+" "+_.lastname}</h1> <br />
+                
+                  <button className='px-4 py-2 bg-emerald-800 text-white rounded-sm' >Get more info</button>
+                </div>
+                </form>
             ))
         }
     </div>
