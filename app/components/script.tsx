@@ -127,7 +127,9 @@ type UserWithRole = User &{
 const admin:UserWithRole ={
    fullname:"",
    age:0,
-   isAdmin:true
+   isAdmin:true,
+   height:"",
+   career:""
 } 
 
 

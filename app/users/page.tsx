@@ -3,6 +3,17 @@ import { dbConnect } from '../libs/dbconnect'
 import UserModel from '../models/User.model'
 import { User } from '../types'
 
+// export async function generateStaticParams(){
+//   await dbConnect()
+//   const users:User[]=await UserModel.find()
+
+//   return users.map((user)=>(
+//     {
+//       id:user._id
+//     }
+//   ))
+// }
+
 const Page = async() => {
     await dbConnect()
     const users:User[] = await UserModel.find()
@@ -11,7 +22,7 @@ const Page = async() => {
     <div   className='flex gap-2 flex-wrap'>
         {
             users.map((_, idx)=>(
-                <form action={`/users/${_._id}`} key={_._id}>
+                <form action={`/users/${_._id}/shoes/clothes`} key={_._id}>
                   <div  className='border rounded-sm px-4 py-2 '>
                   
                   <h1 className='text-lg font-bold'>{idx+1}.{_.firstname+" "+_.lastname}</h1> <br />

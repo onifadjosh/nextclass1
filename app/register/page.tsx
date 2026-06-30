@@ -2,6 +2,7 @@
 import React, { ChangeEvent, useState } from "react";
 import { registerUser } from "../actions/user.actions";
 import { User } from "../types";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [User, setUser] = useState<User>({
@@ -30,7 +31,7 @@ const Page = () => {
 
     // console.log(User);
   };
-
+ const router = useRouter()
   const submitForm = async (User: User) => {
     setloading(true);
     console.log(User);
@@ -38,6 +39,10 @@ const Page = () => {
     await registerUser(User);
     setloading(false);
     console.log("I am working");
+
+    router.push("/users")
+
+
   };
 
   return (
