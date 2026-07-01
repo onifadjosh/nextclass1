@@ -49,3 +49,30 @@ export const getUser=async(id:string)=>{
   }
 
 }
+
+export const loginUser = async({email, password}:{email:string, password:string})=>{
+  await dbConnect()
+
+  const isUser = await UserModel.findOne({email}).select("+password")
+
+  if(!isUser){
+    return {
+      message:"invalid credentials"
+    }
+  }
+
+  const isMatch = await bcrypt.compare(password, isUser.password)
+
+  if(!isMatch){
+    return{
+      message:"invalid credentials"
+    }
+  }
+
+  return{
+    message:"user logged in successfully",
+    data:{
+      
+    }
+  }
+}

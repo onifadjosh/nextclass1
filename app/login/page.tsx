@@ -1,6 +1,17 @@
 import React from 'react'
+import { dbConnect } from '../libs/dbconnect'
+import { loginUser } from '../actions/user.actions';
 
 const Page = () => {
+
+  const handleLogin=async()=>{
+    await dbConnect();
+
+    const response = await loginUser({email:"", password:""})
+
+    console.log(response.message);
+    
+  }
   return (
     <div className='  flex h-screen  justify-center items-center px-5 '>
 
