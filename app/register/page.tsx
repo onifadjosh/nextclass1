@@ -36,11 +36,21 @@ const Page = () => {
     setloading(true);
     console.log(User);
 
-    await registerUser(User);
-    setloading(false);
-    console.log("I am working");
+   const response = await registerUser(User);
 
-    router.push("/users")
+   if(response?.status==400){
+     setloading(false);
+     console.log("I am working");
+     alert(response.message)
+
+   }else if(response?.status==201){
+    alert(response.message)
+     router.push("/users")
+   }else{
+    setloading(false)
+    alert(response?.message)
+   }
+
 
 
   };

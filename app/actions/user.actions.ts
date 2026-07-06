@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { dbConnect } from "../libs/dbconnect";
@@ -7,72 +7,123 @@ import { User } from "../types";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
-export const registerUser = async(form:User)=>{
+// type Error ={
+//   errorResponse:{
+//     index:number,
+//     code:number
+//   }
+// }
+
+export const registerUser = async (form: User) => {
+  try {
     console.log(form);
     // const user= {
-        // firstname:String(form.get("firstname")),
-        // lastname:form.get("firstname")?.toString(),
-        // email:form.get("email")?.toString(),
-        // password:form.get('password')?.toString()
-       const firstname=form.firstname
-       const lastname=form.lastname
-      const  email=form.email
-       const password=form.password
+    // firstname:String(form.get("firstname")),
+    // lastname:form.get("firstname")?.toString(),
+    // email:form.get("email")?.toString(),
+    // password:form.get('password')?.toString()
+    const firstname = form.firstname;
+    const lastname = form.lastname;
+    const email = form.email;
+    const password = form.password;
     // }
 
-    await dbConnect()
-    const saltRound = 10
-    const hashedPassword = await bcrypt.hash(form.password, saltRound)
+    await dbConnect();
+    const saltRound = 10;
+    const hashedPassword = await bcrypt.hash(form.password, saltRound);
 
-   await UserModel.create({firstname, lastname, email , password:hashedPassword})
-    
-    console.log("i am workinggggg");
+    const createdUser = await UserModel.create({
+      firstname,
+      lastname,
+      email,
+      password: hashedPassword,
+    });
 
-    revalidatePath("/users")
+    if (!createdUser) {
+      return {
+        status: 400,
+        message: "User creation failed",
+      };
+    }
+
+    revalidatePath("/users");
     // redirect("/users")
+     return{
+      status:201,
+      message:"user created successfully",
+      data:createdUser
+    }
+    // console.log("i am workinggggg");
+
+
+  } catch (error) {
+    console.log(error.code);
     
-}
 
-export const getUser=async(id:string)=>{
-    await dbConnect()
-
-  const user=  await UserModel.findById(id)
-
-  if(!user){
+    if(error.code==11000){
+      return {
+        status: 500,
+        message: "User already exist!",
     
+      };
+    }else{
+      return {
+        status: 500,
+        message: "User creation failed",
+
+      };
+    }
+  }
+};
+
+export const getUser = async (id: string) => {
+  await dbConnect();
+
+  const user = await UserModel.findById(id);
+
+  if (!user) {
     return {
-        message:"user does not exist"
+      message: "user does not exist",
     };
-  }else{
-
-      return user;
+  } else {
+    return user;
   }
+};
 
-}
+export const loginUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  await dbConnect();
 
-export const loginUser = async({email, password}:{email:string, password:string})=>{
-  await dbConnect()
+  const isUser = await UserModel.findOne({ email }).select("+password");
 
-  const isUser = await UserModel.findOne({email}).select("+password")
-
-  if(!isUser){
+  if (!isUser) {
     return {
-      message:"invalid credentials"
-    }
+      status:400,
+      message: "invalid credentials",
+    };
   }
 
-  const isMatch = await bcrypt.compare(password, isUser.password)
+  const isMatch = await bcrypt.compare(password, isUser.password);
 
-  if(!isMatch){
-    return{
-      message:"invalid credentials"
-    }
+  if (!isMatch) {
+    return {
+       status:400,
+      message: "invalid credentials",
+    };
   }
 
-  return{
-    message:"user logged in successfully",
-    data:{
-      
-    }
-  }
-}
+  return {
+     status:200,
+    message: "user logged in successfully",
+    data: {
+      firstname: isUser.firstname,
+      lastname: isUser.lastname,
+      email: isUser.email,
+    },
+  };
+};
