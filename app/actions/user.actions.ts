@@ -6,6 +6,7 @@ import UserModel from "../models/User.model";
 import { User } from "../types";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import { encrypt } from "../libs/session";
 
 // type Error ={
 //   errorResponse:{
@@ -45,6 +46,10 @@ export const registerUser = async (form: User) => {
         message: "User creation failed",
       };
     }
+
+    const token = await encrypt({id:createdUser._id})
+    console.log(token);
+    
 
     revalidatePath("/users");
     // redirect("/users")
