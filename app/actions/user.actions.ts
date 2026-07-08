@@ -6,7 +6,9 @@ import UserModel from "../models/User.model";
 import { User } from "../types";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { encrypt } from "../libs/session";
+import { decrypt, encrypt } from "../libs/session";
+import { cookies } from "next/headers";
+
 
 // type Error ={
 //   errorResponse:{
@@ -51,12 +53,20 @@ export const registerUser = async (form: User) => {
     console.log(token);
     
 
-    revalidatePath("/users");
     // redirect("/users")
+    
+    const expiry = await decrypt(token)
+    
+    const cookieStore = await cookies()
+    const timeOfExp =expiry.payload?.exp ? new Date(expiry.payload?.exp *1000): undefined
+    cookieStore.set("token", token, {expires:timeOfExp} )
+    
+    revalidatePath("/users");
      return{
       status:201,
       message:"user created successfully",
-      data:createdUser
+      data:createdUser,
+      token
     }
     // console.log("i am workinggggg");
 
@@ -121,6 +131,24 @@ export const loginUser = async ({
       message: "invalid credentials",
     };
   }
+
+  const token = await encrypt({id:isUser._id.toString()})
+    console.log("token", token);
+
+    console.log("id from db", isUser._id.toString());
+    
+    
+
+    // redirect("/users")
+    
+    const expiry = await decrypt(token)
+    
+    const cookieStore = await cookies()
+    const timeOfExp =expiry.payload?.exp ? new Date(expiry.payload?.exp *1000): undefined
+    const userId = expiry.payload?.id
+    console.log("id from token", userId);
+    
+    cookieStore.set("token", token, {expires:timeOfExp} )
 
   return {
      status:200,

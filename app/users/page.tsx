@@ -2,6 +2,7 @@ import React from 'react'
 import { dbConnect } from '../libs/dbconnect'
 import UserModel from '../models/User.model'
 import { User } from '../types'
+import { isAuth } from '../libs/session'
 
 // export async function generateStaticParams(){
 //   await dbConnect()
@@ -16,6 +17,7 @@ import { User } from '../types'
 
 const Page = async() => {
     await dbConnect()
+    await isAuth()
     const users:User[] = await UserModel.find()
 
   return (
