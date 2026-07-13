@@ -17,7 +17,7 @@ import { isAuth } from '../libs/session'
 
 const Page = async() => {
     await dbConnect()
-    await isAuth()
+    // await isAuth()
     const users:User[] = await UserModel.find()
 
   return (
